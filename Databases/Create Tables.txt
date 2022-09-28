@@ -1,0 +1,64 @@
+create database tendermanagementsystem;
+
+use tendermanagementsystem;
+
+create table Administrator
+(
+username varchar(15) primary key,
+password varchar(15) not null,
+aname varchar(15),
+amob varchar(10),
+aemail varchar(15)
+);
+
+create table Vendor
+(
+username varchar(15) primary key,
+password varchar(20) not null,
+vname varchar(15),
+vmob varchar(10),
+vemail varchar(20),
+company varchar(15),
+address varchar(50)
+);
+
+create table Tender
+(
+tid int primary key,
+tname varchar(25) not null,
+ttype varchar(20),
+tprice int not null,
+tdesc varchar(250),
+tdeadline date,
+taddress varchar(50)
+);
+
+create table Bidder
+(
+bid int primary key auto_increment,
+bidamount int,
+deadline date,
+status varchar(15),
+username varchar(15),
+tid int,
+foreign key (username) references Vendor(username),
+foreign key (tid) references Tender(tid)
+);
+
+
+create table tenderstatus
+(
+tid int,
+bid int,
+status varchar(15),
+username varchar(15),
+foreign key (tid) references Tender(tid),
+foreign key (bid) references Bidder(bid),
+foreign key (username) references Vendor(username)
+);
+
+
+
+
+
+
