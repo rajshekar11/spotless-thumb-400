@@ -11,6 +11,8 @@ amob varchar(10),
 aemail varchar(15)
 );
 
+insert into Administrator values('admin','12345','raj','9731473623','ae@gmail.com');
+
 create table Vendor
 (
 username varchar(15) primary key,
@@ -21,6 +23,8 @@ vemail varchar(20),
 company varchar(15),
 address varchar(50)
 );
+
+insert into Vendor values(?,?,?,?,?,?,?);
 
 create table Tender
 (
