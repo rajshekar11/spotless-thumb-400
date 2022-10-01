@@ -4,10 +4,12 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.masai.bean.Tender;
 import com.masai.bean.TenderStatus;
+import com.masai.exceptions.TenderException;
 import com.masai.utility.DBUtil;
 
 public class TendorDaoImpl implements TenderDao {
@@ -34,7 +36,7 @@ public class TendorDaoImpl implements TenderDao {
 			}
 			
 		} catch (SQLException e) {
-			// TODO: handle exception
+			System.out.println(e.getMessage());
 		}
 		
 		
@@ -43,7 +45,7 @@ public class TendorDaoImpl implements TenderDao {
 	}
 
 	@Override
-	public Tender getTenderById(int tid) {
+	public Tender getTenderById(int tid) throws TenderException {
 		Tender t=null;
 		try(Connection con=DBUtil.provideConnection()) {
 			
@@ -65,7 +67,10 @@ public class TendorDaoImpl implements TenderDao {
 			}
 			
 		} catch (SQLException e) {
-			// TODO: handle exception
+			System.out.println(e.getMessage());
+		}
+		if(t==null) {
+			throw new TenderException("There are no tender by id: "+tid);
 		}
 		return t;
 	}
@@ -86,7 +91,7 @@ public class TendorDaoImpl implements TenderDao {
 			}
 			
 		} catch (SQLException e) {
-			// TODO: handle exception
+			System.out.println(e.getMessage());
 		}
 		
 		
@@ -95,8 +100,8 @@ public class TendorDaoImpl implements TenderDao {
 	}
 
 	@Override
-	public List<Tender> getAllTenders() {
-		List<Tender> li=null;
+	public List<Tender> getAllTenders() throws TenderException {
+		List<Tender> li=new ArrayList<>();
 		try(Connection con=DBUtil.provideConnection()) {
 			
 			PreparedStatement pr= con.prepareStatement("select * from tender");
@@ -116,14 +121,34 @@ public class TendorDaoImpl implements TenderDao {
 			}
 			
 		} catch (SQLException e) {
-			// TODO: handle exception
+			System.out.println(e.getMessage());
 		}
+		if(li.isEmpty()) {
+			throw new TenderException("There are no tenders");
+		}
+		
 		return li;
 	}
 
 	@Override
-	public String getTenderStatus(int tid) {
+	public String getTenderStatus(int bid) {
 		String res="No status found";
+		try(Connection con=DBUtil.provideConnection()) {
+			
+			PreparedStatement pr1= con.prepareStatement("select * from tenderstatus where bid=?");
+			
+			pr1.setInt(1, bid);
+			
+			ResultSet rs=pr1.executeQuery();
+			
+			if(rs.next()) {
+				res="Already assigned";
+			}
+			
+			
+		} catch (SQLException e) {
+			System.out.println(e.getMessage());
+		}
 		
 		
 		return res;
@@ -146,7 +171,7 @@ public class TendorDaoImpl implements TenderDao {
 			}
 			else {
 			
-			PreparedStatement pr= con.prepareStatement("insert into tenderstatus(tenderId,vendorUsername,bidderId) values(?,?,?)");
+			PreparedStatement pr= con.prepareStatement("insert into tenderstatus(tid,username,bid) values(?,?,?)");
 			
 			pr.setInt(1, tenderId);
 			pr.setString(2, vendorUsername);
@@ -160,14 +185,14 @@ public class TendorDaoImpl implements TenderDao {
 			}
 			
 		} catch (SQLException e) {
-			// TODO: handle exception
+			System.out.println(e.getMessage());
 		}
 		return res;
 	}
 
 	@Override
-	public List<TenderStatus> getAllAssignedTenders() {
-		List<TenderStatus> li=null;
+	public List<TenderStatus> getAllAssignedTenders() throws TenderException {
+		List<TenderStatus> li=new ArrayList<>();
 		try(Connection con=DBUtil.provideConnection()) {
 			
 			PreparedStatement pr= con.prepareStatement("select * from tenderstatus");
@@ -183,7 +208,11 @@ public class TendorDaoImpl implements TenderDao {
 			}
 			
 		} catch (SQLException e) {
-			// TODO: handle exception
+			System.out.println(e.getMessage());
+		}
+		
+		if(li.isEmpty()) {
+			throw new TenderException("There are no assigned tenders");
 		}
 		return li;
 	}

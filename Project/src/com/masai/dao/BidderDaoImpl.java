@@ -4,35 +4,45 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.masai.bean.Bidder;
 import com.masai.bean.Tender;
+import com.masai.exceptions.BidderException;
 import com.masai.utility.DBUtil;
 
 public class BidderDaoImpl implements BidderDao {
 
 	@Override
-	public String bidATender(int tendorId, String vendorUsername, int bidAmount, String deadline) {
+	public String bidATender(int tendorId, String vendorUsername, int bidAmount, String deadline) throws BidderException {
+		
 		String res="Bid failed";
 		
 			try(Connection con=DBUtil.provideConnection()) {
 				
-			PreparedStatement pr= con.prepareStatement("insert into Bidder(bidamount,deadline,username,tid) values(?,?,?,?,?,?)");
+				PreparedStatement pr1=con.prepareStatement("select * from bidder where username=?");
+				pr1.setString(1, "vendorUsername");
+				ResultSet rs=pr1.executeQuery();
+				if(rs.next()) {
+					throw new BidderException("Vendor: "+vendorUsername+" already placed a bid");
+				}
+				else {
+				
+			PreparedStatement pr= con.prepareStatement("insert into Bidder(bidamount,deadline,username,tid) values(?,?,?,?)");
 			String status="Pending";
 			pr.setInt(1, bidAmount);
 			pr.setString(2, deadline);
-			pr.setString(3, status);
-			pr.setString(4, vendorUsername);
-			pr.setInt(5, tendorId);
-			
+			pr.setString(3, vendorUsername);
+			pr.setInt(4, tendorId);
 			int x= pr.executeUpdate();
 			if(x>0) {
-				res="Tender created successfully!";
+				res="Bid placed successfully by a vendor: "+vendorUsername;
 			}
+		}
 			
 		} catch (SQLException e) {
-			// TODO: handle exception
+			System.out.println(e.getMessage());
 		}
 		
 		return res;
@@ -55,7 +65,7 @@ public class BidderDaoImpl implements BidderDao {
 			}
 			
 		} catch (SQLException e) {
-			// TODO: handle exception
+			System.out.println(e.getMessage());
 		}
 		
 		return res;
@@ -68,8 +78,8 @@ public class BidderDaoImpl implements BidderDao {
 	}
 
 	@Override
-	public List<Bidder> getAllBids() {
-		List<Bidder> li=null;
+	public List<Bidder> getAllBids() throws BidderException {
+		List<Bidder> li=new ArrayList<>();
 		try(Connection con=DBUtil.provideConnection()) {
 			
 			PreparedStatement pr= con.prepareStatement("select * from Bidder");
@@ -88,14 +98,18 @@ public class BidderDaoImpl implements BidderDao {
 			}
 			
 		} catch (SQLException e) {
-			// TODO: handle exception
+			System.out.println(e.getMessage());
 		}
+		if(li.isEmpty()) {
+			throw new BidderException("No bids made yet");
+		}
+		
 		return li;
 	}
 
 	@Override
-	public List<Bidder> getBidsByTenderID(int tid) {
-		List<Bidder> li=null;
+	public List<Bidder> getBidsByTenderID(int tid) throws BidderException {
+		List<Bidder> li=new ArrayList<>();
 		try(Connection con=DBUtil.provideConnection()) {
 			
 			PreparedStatement pr= con.prepareStatement("select * from Bidder where tid=?");
@@ -116,14 +130,18 @@ public class BidderDaoImpl implements BidderDao {
 			}
 			
 		} catch (SQLException e) {
-			// TODO: handle exception
+			System.out.println(e.getMessage());
 		}
+		if(li.isEmpty()) {
+			throw new BidderException("There are No bids placed for tenderId: "+tid);
+		}
+		
 		return li;
 	}
 
 	@Override
-	public List<Bidder> getBidsByVendorUsername(String username) {
-		List<Bidder> li=null;
+	public List<Bidder> getBidsByVendorUsername(String username) throws BidderException {
+		List<Bidder> li=new ArrayList<>();
 		try(Connection con=DBUtil.provideConnection()) {
 			
 			PreparedStatement pr= con.prepareStatement("select * from Bidder where username=?");
@@ -144,9 +162,37 @@ public class BidderDaoImpl implements BidderDao {
 			}
 			
 		} catch (SQLException e) {
-			// TODO: handle exception
+			System.out.println(e.getMessage());
 		}
+		if(li.isEmpty()) {
+			throw new BidderException("No bids by vendor username: "+username);
+		}
+		
 		return li;
+	}
+
+	@Override
+	public String getBidStatus(int bid) {
+		String res="No status found";
+		try(Connection con=DBUtil.provideConnection()) {
+			
+			PreparedStatement pr1= con.prepareStatement("select * from tenderstatus where bid=?");
+			
+			pr1.setInt(1, bid);
+			
+			ResultSet rs=pr1.executeQuery();
+			
+			if(rs.next()) {
+				res="Already assigned";
+			}
+			
+			
+		} catch (SQLException e) {
+			System.out.println(e.getMessage());
+		}
+		
+		
+		return res;
 	}
 
 }

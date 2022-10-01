@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.masai.bean.Vendor;
@@ -34,7 +35,7 @@ public class VendorDaoImpl implements VendorDao {
 			
 			
 		} catch (SQLException e) {
-			// TODO: handle exception
+			System.out.println(e.getMessage());
 		}
 		return res;
 	}
@@ -61,14 +62,14 @@ public class VendorDaoImpl implements VendorDao {
 			
 			
 		} catch (SQLException e) {
-			// TODO: handle exception
+			System.out.println(e.getMessage());
 		}
 		return res;
 	}
 
 	@Override
 	public List<Vendor> getAllVendors() {
-		List<Vendor> li=null;
+		List<Vendor> li=new ArrayList<>();
 		
 		try(Connection con=DBUtil.provideConnection()) {
 			
@@ -88,11 +89,14 @@ public class VendorDaoImpl implements VendorDao {
 				String address=rs.getString("address");
 				
 				Vendor v=new Vendor(username, password, vname, vmob, vemail, company, address);
-				li.add(v);
+				if(v!=null) {
+					li.add(v);
+				}
+				
 			}
 			 
 		} catch (SQLException e) {
-			// TODO: handle exception
+			System.out.println(e.getMessage());
 		}
 		
 		return li;
@@ -124,7 +128,7 @@ try(Connection con=DBUtil.provideConnection()) {
 			}
 			 
 		} catch (SQLException e) {
-			// TODO: handle exception
+			System.out.println(e.getMessage());
 		}
 		
 		
@@ -152,9 +156,8 @@ try(Connection con=DBUtil.provideConnection()) {
 			
 		} catch (SQLException e) {
 			
-			
+			System.out.println(e.getMessage());
 		}
-		
 		
 		return flag;
 	}

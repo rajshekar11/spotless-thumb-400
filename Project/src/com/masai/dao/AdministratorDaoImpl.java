@@ -30,7 +30,7 @@ public class AdministratorDaoImpl implements AdministratorDao {
 			}
 			
 		} catch (SQLException e) {
-			// TODO: handle exception
+			System.out.println(e.getMessage());
 		}
 		
 		
@@ -59,7 +59,7 @@ public class AdministratorDaoImpl implements AdministratorDao {
 			}
 			
 		} catch (SQLException e) {
-			// TODO: handle exception
+			System.out.println(e.getMessage());
 		}
 		
 		
@@ -86,7 +86,7 @@ public class AdministratorDaoImpl implements AdministratorDao {
 			}
 			
 		} catch (SQLException e) {
-			
+			System.out.println(e.getMessage());
 			
 		}
 		
