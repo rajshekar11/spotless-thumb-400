@@ -32,7 +32,9 @@ public class AdminOptions {
 		System.out.println("4. View All the Tenders");
 		System.out.println("5. View All the Bids of a tender.");
 		System.out.println("6. Assign tender to a vendor.");
-		System.out.println("7. Exit");
+		System.out.println("7. Accept a bid");
+		System.out.println("8. View All the Bids");
+		System.out.println("9. Exit");
 		int options2=sc.nextInt();
 		switch (options2) {
 		case 1: {
@@ -131,11 +133,35 @@ public class AdminOptions {
 		AdminOptions.adminOptions();
 		break;
 	}
-	case 7:
+	case 7:{
+		System.out.println("Enter bid id: ");
+		int bidId=sc.nextInt();
+		System.out.println("Enter vendor username:");
+		String vendorUsername=sc.next();
+		System.out.println("Enter tender id:");
+		String tenderId=sc.next();
+		String res= bd.acceptBid(bidId, vendorUsername, bidId);
+		System.out.println(res);
+		AdminOptions.adminOptions();
+		break;
+	}
+	case 8:{
+	 try {
+		List<Bidder> li=bd.getAllBids();
+		for(Bidder i:li) {
+			System.out.println(i);
+		}
+	} catch (BidderException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
+	 AdminOptions.adminOptions();
+	 break;
+	}
+	case 9:{
 		AdminOptions.exit();
-	
-	return;
-	
+		break;
+	}
 	}
 	}
 	

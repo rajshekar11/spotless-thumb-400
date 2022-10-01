@@ -29,12 +29,13 @@ public class BidderDaoImpl implements BidderDao {
 				}
 				else {
 				
-			PreparedStatement pr= con.prepareStatement("insert into Bidder(bidamount,deadline,username,tid) values(?,?,?,?)");
+			PreparedStatement pr= con.prepareStatement("insert into Bidder(bidamount,deadline,username,tid,status) values(?,?,?,?,?)");
 			String status="Pending";
 			pr.setInt(1, bidAmount);
 			pr.setString(2, deadline);
 			pr.setString(3, vendorUsername);
 			pr.setInt(4, tendorId);
+			pr.setString(5, "pending");
 			int x= pr.executeUpdate();
 			if(x>0) {
 				res="Bid placed successfully by a vendor: "+vendorUsername;
@@ -57,7 +58,7 @@ public class BidderDaoImpl implements BidderDao {
 			PreparedStatement ps= con.prepareStatement("update bidder set status=? where bid=? and status=?");
 			ps.setString(1, "Accepted");
 			ps.setInt(2, bidId);
-			ps.setString(3, "Pending");
+			ps.setString(3, "pending");
 			
 			int x= ps.executeUpdate();
 			if(x>0) {
@@ -183,7 +184,7 @@ public class BidderDaoImpl implements BidderDao {
 			ResultSet rs=pr1.executeQuery();
 			
 			if(rs.next()) {
-				res="Already assigned";
+				res="Congrats! Bid has been accepted";
 			}
 			
 			
