@@ -1,6 +1,6 @@
 package com.masai.main;
 
-import com.masai.dao.Options;
+import com.masai.options.Options;
 
 public class Main {
 
