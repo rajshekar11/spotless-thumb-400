@@ -35,10 +35,13 @@ public class Options {
 			boolean ans= ad.logInAdmin(username, password);
 			if(ans) {
 				System.out.println("Welcome: "+username);
+				System.out.println();
 				AdminOptions.adminOptions();
 			}
 			else {
+				
 				System.out.println("Invalid Username or Password!");
+				System.out.println();
 			}
 				
 			Options.selectOptions();
@@ -53,10 +56,12 @@ public class Options {
 			boolean flag= vd.vendorLogIn(username, password);
 			if(flag==true) {
 				System.out.println("Welcome: "+username);
+				System.out.println();
 				VendorOptions.vendorOptions();
 			}
 			else {
-				System.out.println("Failed");
+				System.out.println("Invalid Username or Password!");
+				System.out.println();
 			}
 			Options.selectOptions();
 			break;
